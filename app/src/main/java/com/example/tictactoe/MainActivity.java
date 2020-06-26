@@ -1,8 +1,8 @@
 package com.example.tictactoe;
 
 import android.os.AsyncTask;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -18,11 +18,10 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
-    public static Socket socket;
     private static final String SERVER = "192.168.56.1";
     private static final int PORT = 5050;
     private static final int MSG_SIZE = 1000;
-
+    public static Socket socket;
     private Button[][] buttons = new Button[3][3];
 
     private boolean player1Turn = true;
@@ -47,7 +46,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
                 String buttonID = "button_" + i + j;
-                int resID = getResources().getIdentifier(buttonID, "id", getPackageName());
+                int resID = getResources().getIdentifier(buttonID , "id" , getPackageName());
                 buttons[i][j] = findViewById(resID);
                 buttons[i][j].setOnClickListener(this);
             }
@@ -135,20 +134,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void player1Wins() {
         player1Points++;
-        Toast.makeText(this, "Player 1 wins!", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this , "Player 1 wins!" , Toast.LENGTH_SHORT).show();
         updatePointsText();
         resetBoard();
     }
 
     private void player2Wins() {
         player2Points++;
-        Toast.makeText(this, "Player 2 wins!", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this , "Player 2 wins!" , Toast.LENGTH_SHORT).show();
         updatePointsText();
         resetBoard();
     }
 
     private void draw() {
-        Toast.makeText(this, "Draw!", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this , "Draw!" , Toast.LENGTH_SHORT).show();
         resetBoard();
     }
 
@@ -168,11 +167,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         roundCount = 0;
         player1Turn = true;
     }
-    private void resetGame(){
+
+    private void resetGame() {
         //newSendMessages();
         String pl1 = String.valueOf(player1Points);
         String pl2 = String.valueOf(player2Points);
-        String msg = textViewPlayer1.getText() + " "  + textViewPlayer2.getText();
+        String msg = textViewPlayer1.getText() + " " + textViewPlayer2.getText();
 
         new Thread(new SendMessages(msg)).start();
         player1Points = 0;
@@ -185,10 +185,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        outState.putInt("roundCount", roundCount);
-        outState.putInt("player1Points", player1Points);
-        outState.putInt("player2Points", player2Points);
-        outState.putBoolean("player1Turn", player1Turn);
+        outState.putInt("roundCount" , roundCount);
+        outState.putInt("player1Points" , player1Points);
+        outState.putInt("player2Points" , player2Points);
+        outState.putBoolean("player1Turn" , player1Turn);
 
     }
 
@@ -202,6 +202,53 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         player1Turn = savedInstanceState.getBoolean("player1Turn");
 
     }
+
+    private void updateMessage(final String msg) {
+
+        runOnUiThread(new Runnable() {
+
+            @Override
+
+            public void run() {
+
+                Toast.makeText(MainActivity.this , msg , Toast.LENGTH_SHORT).show();
+            }
+
+        });
+
+    }
+
+    static class SendMessages implements Runnable {
+
+        String mesaj;
+
+        public SendMessages(String mesaj) {
+            this.mesaj = mesaj;
+        }
+
+        @Override
+        public void run() {
+
+            try {
+
+                OutputStream output = socket.getOutputStream();
+
+                PrintWriter writer = new PrintWriter(output , true);
+
+                writer.print(mesaj);
+
+                writer.flush();
+
+            } catch (Exception e) {
+
+                e.printStackTrace();
+
+            }
+
+        }
+
+    }
+
     private class AsyncConnection extends AsyncTask {
 
 
@@ -231,7 +278,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         charsRead = in.read(buffer);
 
                         serverMessage = new String(buffer).substring(0 , charsRead);
-                        Toast.makeText(MainActivity.this , serverMessage, Toast.LENGTH_SHORT).show();
+                        updateMessage(serverMessage);
+
+
                     }
 
                 } catch (IOException e) {
@@ -242,40 +291,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             } catch (IOException e) {
                 e.printStackTrace();
             }
-       return null;
+            return null;
         }
     }
-
-    static class SendMessages implements Runnable {
-
-        String mesaj;
-        public SendMessages(String mesaj)
-        {
-            this.mesaj = mesaj;
-        }
-        @Override
-        public void run() {
-
-            try {
-
-                OutputStream output = socket.getOutputStream();
-
-                PrintWriter writer = new PrintWriter(output, true);
-
-                writer.print(mesaj);
-
-                writer.flush();
-
-            } catch (Exception e) {
-
-                e.printStackTrace();
-
-            }
-
-        }
-
-    }
-
 
 
 }
