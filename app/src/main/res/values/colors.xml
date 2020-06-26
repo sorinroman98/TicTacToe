@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#008577</color>
+    <color name="colorPrimaryDark">#00574B</color>
+    <color name="colorAccent">#D81B60</color>
+    <color name="albastru">#1D5EC6</color>
+    <color name="rosu">#ED0000</color>
+    <color name="fundal">#14c8e0</color>
+    <color name="buttonfundal">#3c73c1</color>
+    <color name="resetbuton">#ff001d</color>
+</resources>
